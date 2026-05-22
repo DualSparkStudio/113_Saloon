@@ -1,20 +1,70 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
-export default function ShowcaseNavbar() {
-  const [scrolled, setScrolled] = useState(false);
+const NAV_OFFSET = 88;
+
+export default function ShowcaseNavbar({ light = false }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  /** light = white bar + dark text | dark | accent = glass bar + light text */
+  const [navTheme, setNavTheme] = useState(light ? "light" : "dark");
+
+  const updateNavTheme = useCallback(() => {
+    if (!light) {
+      setNavTheme(window.scrollY > 50 ? "dark" : "dark");
+      return;
+    }
+
+    const sections = document.querySelectorAll("[data-nav-theme]");
+    if (!sections.length) {
+      setNavTheme("light");
+      return;
+    }
+
+    const probe = window.scrollY + NAV_OFFSET;
+    let active = sections[0].dataset.navTheme || "light";
+
+    sections.forEach((section) => {
+      const top = section.offsetTop;
+      const bottom = top + section.offsetHeight;
+      if (probe >= top && probe < bottom) {
+        active = section.dataset.navTheme;
+      }
+    });
+
+    setNavTheme(active);
+  }, [light]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    updateNavTheme();
+    window.addEventListener("scroll", updateNavTheme, { passive: true });
+    window.addEventListener("resize", updateNavTheme);
+    return () => {
+      window.removeEventListener("scroll", updateNavTheme);
+      window.removeEventListener("resize", updateNavTheme);
+    };
+  }, [updateNavTheme]);
+
+  const useLightBar = navTheme === "light";
+
+  const navShell = useLightBar
+    ? "rounded-2xl border border-neutral-200/90 bg-white/95 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-md"
+    : "glass-panel rounded-2xl border border-white/10 py-3 shadow-2xl";
+
+  const logoMain = useLightBar ? "text-neutral-900" : "text-white";
+  const logoAccent = useLightBar ? "text-[#8B6914]" : "text-[#c9a962]";
+  const linkClass = useLightBar
+    ? "text-xs font-semibold tracking-[0.25em] text-neutral-800 uppercase transition-colors hover:text-neutral-950"
+    : "text-xs font-semibold tracking-[0.25em] text-white/90 uppercase transition-colors hover:text-[#c9a962]";
+  const ctaClass = useLightBar
+    ? "hidden rounded-full bg-neutral-900 px-6 py-2.5 text-xs font-semibold tracking-[0.2em] text-white uppercase shadow-md transition-all hover:bg-neutral-800 md:inline-block"
+    : "hidden rounded-full border border-white/30 bg-white/10 px-6 py-2.5 text-xs font-semibold tracking-[0.2em] text-white uppercase backdrop-blur-sm transition-all hover:bg-white/20 md:inline-block";
+  const menuBar = useLightBar ? "bg-neutral-900" : "bg-white";
 
   const links = [
-    { label: "Themes", href: "#themes" },
-    { label: "Experience", href: "#experience" },
+    { label: "Services", href: "#services" },
+    { label: "About", href: "#about" },
+    { label: "Gallery", href: "#gallery" },
     { label: "Contact", href: "#contact" },
   ];
 
@@ -22,42 +72,30 @@ export default function ShowcaseNavbar() {
     <motion.header
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 1.2, duration: 0.8 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? "py-3" : "py-6"
-      }`}
+      transition={{ delay: 0.3, duration: 0.6 }}
+      className="fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300"
     >
       <nav
-        className={`mx-auto flex max-w-7xl items-center justify-between px-6 transition-all duration-500 md:px-10 ${
-          scrolled
-            ? "glass-panel rounded-2xl py-3 shadow-2xl"
-            : ""
-        }`}
+        className={`mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-300 md:px-8 ${navShell}`}
       >
         <Link to="/" className="group flex items-center gap-2">
-          <span className="font-display text-xl tracking-[0.2em] text-white md:text-2xl">
-            LUXE<span className="text-[#c9a962] transition-colors group-hover:text-[#e8d5a3]">ATELIER</span>
+          <span className={`font-editorial text-xl font-bold tracking-[0.15em] md:text-2xl ${logoMain}`}>
+            LUXE<span className={`${logoAccent} transition-colors group-hover:opacity-80`}>ATELIER</span>
           </span>
         </Link>
 
         <ul className="hidden items-center gap-10 md:flex">
           {links.map((link) => (
             <li key={link.href}>
-              <a
-                href={link.href}
-                className="text-xs tracking-[0.25em] text-white/60 uppercase transition-colors hover:text-[#c9a962]"
-              >
+              <a href={link.href} className={linkClass}>
                 {link.label}
               </a>
             </li>
           ))}
         </ul>
 
-        <a
-          href="#themes"
-          className="hidden rounded-full border border-[#c9a962]/40 bg-[#c9a962]/10 px-6 py-2.5 text-xs tracking-[0.2em] text-[#c9a962] uppercase backdrop-blur-sm transition-all hover:bg-[#c9a962]/20 hover:shadow-[0_0_30px_rgba(201,169,98,0.3)] md:inline-block"
-        >
-          Explore Themes
+        <a href="#book" className={ctaClass}>
+          Book Now
         </a>
 
         <button
@@ -66,9 +104,9 @@ export default function ShowcaseNavbar() {
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Menu"
         >
-          <span className={`h-px w-6 bg-white transition-all ${mobileOpen ? "rotate-45 translate-y-2" : ""}`} />
-          <span className={`h-px w-6 bg-white transition-all ${mobileOpen ? "opacity-0" : ""}`} />
-          <span className={`h-px w-6 bg-white transition-all ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          <span className={`h-0.5 w-6 ${menuBar} transition-all ${mobileOpen ? "translate-y-2 rotate-45" : ""}`} />
+          <span className={`h-0.5 w-6 ${menuBar} transition-all ${mobileOpen ? "opacity-0" : ""}`} />
+          <span className={`h-0.5 w-6 ${menuBar} transition-all ${mobileOpen ? "-translate-y-2 -rotate-45" : ""}`} />
         </button>
       </nav>
 
@@ -76,14 +114,18 @@ export default function ShowcaseNavbar() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-panel mx-4 mt-2 rounded-2xl p-6 md:hidden"
+          className={`mx-4 mt-2 rounded-2xl border p-6 md:hidden ${
+            useLightBar ? "border-neutral-200 bg-white shadow-xl" : "glass-panel border-white/10"
+          }`}
         >
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="block py-3 text-sm tracking-widest text-white/70 uppercase"
+              className={`block py-3 text-sm font-medium tracking-widest uppercase ${
+                useLightBar ? "text-neutral-800" : "text-white/80"
+              }`}
             >
               {link.label}
             </a>

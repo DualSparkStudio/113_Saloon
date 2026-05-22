@@ -27,7 +27,7 @@ export const galleryImages = images.gallery;
 export const salonInfo = {
   address: "1 Luxury Boulevard, Prestige District, Suite 100",
   phone: "+1 (888) 555-LUXE",
-  email: "concierge@luxeatelier.com",
+  email: "dualsparkstudio@gmail.com",
   hours: [
     { days: "Monday – Friday", time: "9:00 AM – 8:00 PM" },
     { days: "Saturday", time: "8:00 AM – 9:00 PM" },

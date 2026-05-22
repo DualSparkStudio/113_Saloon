@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { services, team, testimonials, galleryImages } from "../../data/sharedContent";
+import { services, galleryImages } from "../../data/sharedContent";
 import SafeImage from "../../components/ui/SafeImage";
 import PaletteSwitcher from "./PaletteSwitcher";
 import DemoRichSections from "./DemoRichSections";
