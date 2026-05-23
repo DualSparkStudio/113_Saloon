@@ -1,4 +1,5 @@
 import { salonInfo, faqs } from "../../data/sharedContent";
+import BrandWordmark from "../brand/BrandWordmark";
 
 const quickLinks = [
   { label: "Services", href: "#services" },
@@ -14,9 +15,7 @@ export default function SalonFooter() {
       <div className="mx-auto max-w-7xl px-5 md:px-10">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <p className="font-editorial text-2xl font-black uppercase tracking-wide text-white md:text-3xl">
-              Luxe<span className="text-[#c9a962]">Atelier</span>
-            </p>
+            <BrandWordmark size="lg" light />
             <p className="mt-4 max-w-md text-sm leading-relaxed text-white/50">
               A luxury salon experience — precision styling, couture colour, and restorative rituals in
               the heart of the Prestige District.
@@ -71,7 +70,21 @@ export default function SalonFooter() {
         </div>
 
         <div className="mt-8 flex flex-col gap-4 border-t border-white/10 pt-8 md:flex-row md:items-center md:justify-between">
-          <p className="text-xs text-white/30">© 2026 Luxe Atelier Salon. All rights reserved.</p>
+          <p className="text-xs text-white/30">
+            © 2026 Luxe Atelier Salon. All rights reserved.
+            <span className="mx-1.5 hidden sm:inline">·</span>
+            <span className="mt-1 block sm:mt-0 sm:inline">
+              Crafted by{" "}
+              <a
+                href="https://dualsparkstudio.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-[#c9a962] transition hover:text-[#e8d5a3] hover:underline"
+              >
+                DualSpark Studio
+              </a>
+            </span>
+          </p>
           <p className="text-xs text-white/25">{faqs[3]?.a}</p>
         </div>
       </div>

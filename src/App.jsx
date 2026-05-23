@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation, useParams, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import LoadingScreen from "./components/showcase/LoadingScreen";
+import LoadingScreen, { LOADER_DURATION_MS } from "./components/showcase/LoadingScreen";
 import LuxuryCursor from "./components/showcase/LuxuryCursor";
 import PageTransition from "./components/PageTransition";
 import HomePage from "./pages/HomePage";
@@ -71,7 +71,7 @@ function AppShell() {
   const location = useLocation();
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2200);
+    const timer = setTimeout(() => setLoading(false), LOADER_DURATION_MS);
     return () => clearTimeout(timer);
   }, []);
 

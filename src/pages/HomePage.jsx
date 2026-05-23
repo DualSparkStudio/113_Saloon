@@ -10,7 +10,7 @@ import SalonFooter from "../components/salon/SalonFooter";
 
 export default function HomePage() {
   return (
-    <div className="relative min-h-screen bg-[#f0f0f0]">
+    <div className="relative min-h-screen w-full max-w-[100vw] overflow-x-clip bg-[#f0f0f0]">
       <ShowcaseNavbar light />
       <ShowcaseHero />
       <SalonServices />

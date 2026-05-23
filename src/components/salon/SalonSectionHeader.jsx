@@ -14,7 +14,7 @@ export default function SalonSectionHeader({
   const descColor = accent ? "rgba(255,255,255,0.8)" : dark ? "rgba(255,255,255,0.55)" : "rgba(0,0,0,0.55)";
 
   return (
-    <ScrollReveal className={`mb-12 md:mb-16 max-w-2xl ${alignClass}`}>
+    <ScrollReveal className={`mb-8 max-w-2xl max-md:mb-6 md:mb-16 ${alignClass}`}>
       <p
         className="font-editorial text-[10px] font-bold tracking-[0.35em] uppercase md:text-xs"
         style={{ color: labelColor }}
@@ -22,7 +22,7 @@ export default function SalonSectionHeader({
         {label}
       </p>
       <h2
-        className="mt-3 font-editorial text-3xl font-black uppercase leading-[0.95] tracking-tight md:text-5xl"
+        className="mt-2 font-editorial text-2xl font-black uppercase leading-[0.95] tracking-tight max-md:text-[1.65rem] md:mt-3 md:text-5xl"
         style={{ color: titleColor }}
       >
         {title}

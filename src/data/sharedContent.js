@@ -1,12 +1,54 @@
 import { images } from "./images";
 
 export const services = [
-  { name: "Signature Cut & Style", price: "From $185", duration: "90 min", desc: "Precision cut, luxury wash, and bespoke styling with our creative directors." },
-  { name: "Balayage & Color Artistry", price: "From $420", duration: "3 hrs", desc: "Hand-painted dimension, seamless blends, and couture colour correction." },
-  { name: "Luxury Keratin Treatment", price: "From $350", duration: "2.5 hrs", desc: "Smoothing ritual with premium keratin for mirror-like shine." },
-  { name: "Bridal Beauty Experience", price: "From $1,200", duration: "Full day", desc: "Trial, day-of styling, and an on-site artist for your celebration." },
-  { name: "Executive Grooming", price: "From $95", duration: "45 min", desc: "Refined cuts and grooming in a private suite." },
-  { name: "Spa & Wellness Ritual", price: "From $280", duration: "2 hrs", desc: "Scalp therapy, aromatherapy, and restorative treatments." },
+  {
+    name: "Signature Cut & Style",
+    price: "From $185",
+    duration: "90 min",
+    desc: "Precision cut, luxury wash, and bespoke styling with our creative directors.",
+    image: images.salonGallery[0],
+    imageAlt: "Precision haircut and styling at Luxe Atelier",
+  },
+  {
+    name: "Balayage & Color Artistry",
+    price: "From $420",
+    duration: "3 hrs",
+    desc: "Hand-painted dimension, seamless blends, and couture colour correction.",
+    image: images.salonGallery[1],
+    imageAlt: "Balayage and hair colour artistry",
+  },
+  {
+    name: "Luxury Keratin Treatment",
+    price: "From $350",
+    duration: "2.5 hrs",
+    desc: "Smoothing ritual with premium keratin for mirror-like shine.",
+    image: images.salonGallery[2],
+    imageAlt: "Keratin smoothing and hair treatment",
+  },
+  {
+    name: "Bridal Beauty Experience",
+    price: "From $1,200",
+    duration: "Full day",
+    desc: "Trial, day-of styling, and an on-site artist for your celebration.",
+    image: images.salonGallery[3],
+    imageAlt: "Bridal hair styling and beauty preparation",
+  },
+  {
+    name: "Executive Grooming",
+    price: "From $95",
+    duration: "45 min",
+    desc: "Refined cuts and grooming in a private suite.",
+    image: images.salonGallery[4],
+    imageAlt: "Executive grooming and men's styling",
+  },
+  {
+    name: "Spa & Wellness Ritual",
+    price: "From $280",
+    duration: "2 hrs",
+    desc: "Scalp therapy, aromatherapy, and restorative treatments.",
+    image: images.salonGallery[5],
+    imageAlt: "Scalp therapy and wellness ritual",
+  },
 ];
 
 export const team = [

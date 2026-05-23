@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import Lenis from "lenis";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import SafeImage from "../ui/SafeImage";
 import { images } from "../../data/images";
 
@@ -25,19 +25,21 @@ function TextCard({ children, variant = "dark", className = "" }) {
   const isDark = variant === "dark";
   return (
     <div
-      className={`flex items-center justify-center overflow-hidden rounded-2xl p-4 shadow-xl md:rounded-3xl md:p-6 ${className}`}
+      className={`flex h-full items-center justify-center overflow-hidden rounded-2xl p-4 shadow-xl md:rounded-3xl md:p-6 ${className}`}
       style={{ background: isDark ? "#111" : "#fff", color: isDark ? "#fff" : "#111" }}
     >
-      <p className="font-editorial text-center text-xl font-bold uppercase leading-[0.95] tracking-tight md:text-3xl lg:text-4xl">
+      <p className="font-editorial text-center text-[0.65rem] font-bold uppercase leading-[0.95] tracking-tight max-md:text-[0.6rem] sm:text-sm md:text-3xl lg:text-4xl">
         {children}
       </p>
     </div>
   );
 }
 
-function HeroCenterCard({ image, scrollYProgress }) {
-  const imgY = useTransform(scrollYProgress, [0, 1], [0, -40]);
-  const titleY = useTransform(scrollYProgress, [0, 1], [0, 20]);
+function HeroCenterCard({ image, scrollYProgress, isMobile }) {
+  const imgY = useTransform(scrollYProgress, (v) => v * (isMobile ? -24 : -40));
+  const titleY = useTransform(scrollYProgress, (v) => v * (isMobile ? 12 : 20));
+  const imgMotion = { y: imgY };
+  const titleMotion = { y: titleY };
 
   return (
     <div className="relative h-full overflow-hidden rounded-2xl bg-[#c41e3a] shadow-2xl md:rounded-3xl">
@@ -45,7 +47,7 @@ function HeroCenterCard({ image, scrollYProgress }) {
         <div className="h-full w-full rounded-full bg-white/30 blur-2xl" />
       </div>
 
-      <div className="relative z-10 flex h-full flex-col p-4 md:p-5">
+      <div className="relative z-10 flex h-full flex-col p-3 max-md:p-2.5 md:p-5">
         <div className="flex items-start justify-between">
           <span className="font-editorial text-[10px] font-bold tracking-[0.2em] text-white/90 md:text-xs">
             LUXE ATELIER
@@ -57,7 +59,7 @@ function HeroCenterCard({ image, scrollYProgress }) {
         </div>
 
         <div className="relative flex flex-1 flex-col justify-end">
-          <motion.div style={{ y: imgY }} className="absolute inset-x-0 bottom-16 top-8 md:bottom-20">
+          <motion.div style={imgMotion} className="absolute inset-x-0 bottom-12 top-6 max-md:bottom-10 max-md:top-4 md:bottom-20 md:top-8">
             <SafeImage
               src={image}
               alt="Luxe Atelier"
@@ -65,8 +67,8 @@ function HeroCenterCard({ image, scrollYProgress }) {
             />
           </motion.div>
 
-          <motion.div style={{ y: titleY }} className="relative z-20">
-            <h1 className="font-editorial text-[2.5rem] font-black uppercase leading-[0.85] tracking-tighter text-white md:text-6xl lg:text-7xl">
+          <motion.div style={titleMotion} className="relative z-20">
+            <h1 className="font-editorial text-[2rem] font-black uppercase leading-[0.85] tracking-tighter text-white max-md:text-[1.75rem] md:text-6xl lg:text-7xl">
               Luxe
               <br />
               Atelier
@@ -105,18 +107,36 @@ function HeroCenterCard({ image, scrollYProgress }) {
 /**
  * Tilted masonry hero — inspired by editorial card-grid layouts (Skiper-style).
  */
+const MOBILE_MQ = "(max-width: 767px)";
+const LENIS_MQ = "(min-width: 768px)";
+
 export default function TiltedGalleryHero() {
   const sectionRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia(MOBILE_MQ).matches : false
+  );
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
 
-  const gridY = useTransform(scrollYProgress, [0, 1], [0, -180]);
-  const gridY2 = useTransform(scrollYProgress, [0, 1], [0, -320]);
-  const gridY3 = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const gridY = useTransform(scrollYProgress, (v) => v * (isMobile ? -100 : -180));
+  const gridY2 = useTransform(scrollYProgress, (v) => v * (isMobile ? -160 : -320));
+  const gridY3 = useTransform(scrollYProgress, (v) => v * (isMobile ? -55 : -100));
 
   useEffect(() => {
+    const mq = window.matchMedia(MOBILE_MQ);
+    const onChange = () => setIsMobile(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia(LENIS_MQ);
+    if (!mq.matches) return undefined;
+
     const lenis = new Lenis();
     let rafId = 0;
     const raf = (time) => {
@@ -131,51 +151,80 @@ export default function TiltedGalleryHero() {
   }, []);
 
   return (
-    <section ref={sectionRef} data-nav-theme="light" className="relative bg-[#e3e3e3]">
-      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
-        <motion.div
-          style={{ rotate: GRID_ROTATE, y: gridY }}
-          className="relative grid w-[128vw] max-w-[1400px] grid-cols-12 grid-rows-6 gap-2 p-2 md:w-[115vw] md:gap-3 md:p-3"
-        >
+    <section
+      ref={sectionRef}
+      data-nav-theme="light"
+      className="relative max-w-full overflow-x-clip bg-[#e3e3e3] max-md:bg-white md:bg-[#e3e3e3]"
+    >
+      <div className="relative top-0 flex h-[min(50dvh,340px)] w-full max-w-full items-center justify-center overflow-x-clip overflow-y-hidden pt-[4.5rem] md:sticky md:h-screen md:max-h-none md:pt-0">
+        <div className="flex w-full max-w-full justify-center overflow-x-clip px-1 md:px-0">
+          <motion.div
+            style={{ rotate: GRID_ROTATE, y: gridY }}
+            className="relative grid w-full max-w-[min(100%,520px)] shrink-0 grid-cols-12 grid-rows-6 gap-1.5 p-1.5 max-md:origin-center max-md:scale-[0.88] md:w-[115vw] md:max-w-[1400px] md:scale-100 md:gap-3 md:p-3 lg:w-[128vw]"
+          >
           <motion.div style={{ y: gridY3 }} className="col-span-3 row-span-2">
-            <ImageCard src={images.gallery[0]} caption="Signature" date="Styling · Color" className="h-full min-h-[120px]" />
+            <ImageCard
+              src={images.gallery[0]}
+              caption="Signature"
+              date="Styling · Color"
+              className="h-full min-h-[72px] md:min-h-[120px]"
+            />
           </motion.div>
 
           <motion.div style={{ y: gridY2 }} className="col-span-2 col-start-4 row-span-2">
-            <ImageCard src={images.preview.minimal} className="h-full min-h-[100px]" />
+            <ImageCard src={images.preview.minimal} className="h-full min-h-[64px] md:min-h-[100px]" />
           </motion.div>
 
           <motion.div style={{ y: gridY3 }} className="col-span-3 col-start-10 row-span-2">
-            <ImageCard src={images.gallery[1]} caption="Editorial" date="Beauty · Spa" className="h-full min-h-[120px]" />
+            <ImageCard
+              src={images.gallery[1]}
+              caption="Editorial"
+              date="Beauty · Spa"
+              className="h-full min-h-[72px] md:min-h-[120px]"
+            />
           </motion.div>
 
           <motion.div style={{ y: gridY2 }} className="col-span-3 row-span-2 row-start-3">
-            <TextCard variant="dark">Thinking of a luxury rebrand?</TextCard>
+            <TextCard variant="dark" className="max-md:p-2.5">
+              Thinking of a luxury rebrand?
+            </TextCard>
           </motion.div>
 
           <motion.div style={{ y: gridY }} className="col-span-6 col-start-4 row-span-4 row-start-2">
-            <HeroCenterCard image={images.hero.fashion} scrollYProgress={scrollYProgress} />
+            <HeroCenterCard
+              image={images.hero.fashion}
+              scrollYProgress={scrollYProgress}
+              isMobile={isMobile}
+            />
           </motion.div>
 
           <motion.div style={{ y: gridY3 }} className="col-span-3 col-start-10 row-span-2 row-start-3">
-            <ImageCard src={images.gallery[2]} className="h-full min-h-[120px]" />
+            <ImageCard src={images.gallery[2]} className="h-full min-h-[72px] md:min-h-[120px]" />
           </motion.div>
 
           <motion.div style={{ y: gridY2 }} className="col-span-3 row-span-2 row-start-5">
-            <ImageCard src={images.team[0]} caption="The Collective" date="Creative team" className="h-full min-h-[100px]" />
+            <ImageCard
+              src={images.team[0]}
+              caption="The Collective"
+              date="Creative team"
+              className="h-full min-h-[64px] md:min-h-[100px]"
+            />
           </motion.div>
 
           <motion.div style={{ y: gridY3 }} className="col-span-3 col-start-4 row-span-2 row-start-5">
-            <TextCard variant="light">More than a salon experience</TextCard>
+            <TextCard variant="light" className="max-md:p-2.5">
+              More than a salon experience
+            </TextCard>
           </motion.div>
 
           <motion.div style={{ y: gridY2 }} className="col-span-3 col-start-10 row-span-2 row-start-5">
-            <ImageCard src={images.gallery[3]} className="h-full min-h-[100px]" />
+            <ImageCard src={images.gallery[3]} className="h-full min-h-[64px] md:min-h-[100px]" />
           </motion.div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
 
-      <div className="h-[45vh]" aria-hidden />
+      <div className="hidden h-[45vh] md:block" aria-hidden />
     </section>
   );
 }
